@@ -21,7 +21,7 @@ defmodule Cobwebhook.MixProject do
 	links: %{"GitHub" => "https://github.com/serokell/cobwebhook"},
 	maintainers: ["Yegor Timoshenko"]
       ],
-      version: "0.1.1"
+      version: "0.2.0"
     ]
   end
 end

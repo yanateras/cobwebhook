@@ -8,12 +8,14 @@ defmodule Cobwebhook.Slack do
 
   import Plug.Conn
 
-  def init(secrets), do: secrets
+  def init(fun), do: fun
 
-  def call(conn, secrets) do
+  def call(conn, fun) do
     {:ok, body, conn} = read_body(conn)
     [signature] = get_req_header(conn, "x-slack-signature")
     [timestamp] = get_req_header(conn, "x-slack-request-timestamp")
+
+    secrets = apply(fun, [])
 
     if secret = Utils.find_first(secrets, &Signature.valid?(signature, &1, {timestamp, body})) do
       conn
