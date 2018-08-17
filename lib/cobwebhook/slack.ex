@@ -16,7 +16,9 @@ defmodule Cobwebhook.Slack do
     [timestamp] = get_req_header(conn, "x-slack-request-timestamp")
 
     if secret = Utils.find_first(secrets, &Signature.valid?(signature, &1, {timestamp, body})) do
-      conn |> assign(:payload, Poison.decode!(body)) |> assign(:secret, secret)
+      conn
+      |> assign(:payload, Poison.decode!(body))
+      |> assign(:secret, secret)
     else
       conn |> send_resp(403, "") |> halt()
     end

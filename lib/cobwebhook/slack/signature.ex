@@ -8,6 +8,6 @@ defmodule Cobwebhook.Slack.Signature do
   end
 
   def valid?(signature, secret, data) do
-    Plug.Crypto.secure_compare(signature0, sign(secret, data))
+    Plug.Crypto.secure_compare(signature, sign(secret, data))
   end
 end

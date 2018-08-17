@@ -1,4 +1,6 @@
 defmodule Cobwebhook.Utils do
+  @moduledoc false
+
   @doc """
     Find first element in enum matching predicate.
     
