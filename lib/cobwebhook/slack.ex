@@ -17,12 +17,21 @@ defmodule Cobwebhook.Slack do
 
     secrets = apply(fun, [])
 
-    if secret = Utils.find_first(secrets, &Signature.valid?(signature, &1, {timestamp, body})) do
-      conn
-      |> assign(:payload, Poison.decode!(body))
-      |> assign(:secret, secret)
+    conn = if secret = Utils.find_first(secrets, &Signature.valid?(signature, &1, {timestamp, body})) do
+      conn |> assign(:secret, secret)
     else
       conn |> send_resp(403, "") |> halt()
     end
+
+    payload = case get_req_header(conn, "content-type") do
+      ["application/json"] ->
+        Poison.decode!(body)
+      ["application/x-www-form-urlencoded"] ->
+        URI.decode_query(body)
+      _ ->
+        body
+    end
+
+    conn |> assign(:payload, payload)
   end
 end
