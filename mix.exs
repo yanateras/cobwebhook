@@ -7,8 +7,8 @@ defmodule Cobwebhook.MixProject do
       deps: [
         {:cowboy, "~> 2.4.0", only: :dev},
         {:ex_doc, "~> 0.18.0", only: :dev, runtime: false},
-        {:plug, "~> 1.6.1"},
-        {:poison, "~> 3.1"}
+        {:plug, "~> 1.6"},
+        {:poison, "~> 4.0"}
       ],
       docs: [
         main: "readme",
@@ -21,7 +21,7 @@ defmodule Cobwebhook.MixProject do
 	links: %{"GitHub" => "https://github.com/serokell/cobwebhook"},
 	maintainers: ["Yegor Timoshenko"]
       ],
-      version: "0.1.0"
+      version: "0.1.1"
     ]
   end
 end
