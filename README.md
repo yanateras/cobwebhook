@@ -19,6 +19,6 @@ defmodule Pipeline do
 end
 ```
 
-Takes a function that returns a  list of valid secrets. On valid request, sets
-`conn.assigns.payload` and `conn.assigns.secret` and forwards request to the next
+Takes a function that returns a list of valid secrets. On valid request, sets
+`conn.body_params` and `conn.assigns.secret` and forwards request to the next
 plug in the pipeline.
