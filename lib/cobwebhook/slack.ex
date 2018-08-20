@@ -1,37 +1,31 @@
-alias Cobwebhook.Slack.Signature
-alias Cobwebhook.Utils
-
 defmodule Cobwebhook.Slack do
   @moduledoc """
     See: <https://api.slack.com/events-api>
   """
 
-  import Plug.Conn
+  use Cobwebhook.Adapter
 
-  def init(fun), do: fun
+  def parse(conn, body) do
+    case get_req_header(conn, "content-type") do
+      ["application/json"] ->
+        Jason.decode!(body)
+      ["application/x-www-form-urlencoded"] ->
+        URI.decode_query(body)
+    end
+  end
 
-  def call(conn, fun) do
-    {:ok, body, conn} = read_body(conn)
+  defp data(timestamp, body) do
+    Enum.join(["v0", timestamp, body], ":")
+  end
+
+  defp sign(data, secret) do
+    "v0=" <> Base.encode16(:crypto.hmac(:sha256, secret, data), case: :lower)
+  end
+
+  def verify(conn, body, secret) do
     [signature] = get_req_header(conn, "x-slack-signature")
     [timestamp] = get_req_header(conn, "x-slack-request-timestamp")
 
-    secrets = apply(fun, [])
-
-    conn = if secret = Utils.find_first(secrets, &Signature.valid?(signature, &1, {timestamp, body})) do
-      conn |> assign(:secret, secret)
-    else
-      conn |> send_resp(403, "") |> halt()
-    end
-
-    payload = case get_req_header(conn, "content-type") do
-      ["application/json"] ->
-        Poison.decode!(body)
-      ["application/x-www-form-urlencoded"] ->
-        URI.decode_query(body)
-      _ ->
-        body
-    end
-
-    conn |> assign(:payload, payload)
+    Plug.Crypto.secure_compare(signature, data(timestamp, body) |> sign(secret))
   end
 end

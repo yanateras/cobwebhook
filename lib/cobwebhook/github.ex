@@ -1,27 +1,20 @@
-alias Cobwebhook.GitHub.Signature
-alias Cobwebhook.Utils
-
 defmodule Cobwebhook.GitHub do
   @moduledoc """
     See: <https://developer.github.com/webhooks/>
   """
 
-  import Plug.Conn
+  use Cobwebhook.Adapter
 
-  def init(fun), do: fun
+  def parse(_conn, body) do
+    Poison.decode!(body)
+  end
 
-  def call(conn, fun) do
-    {:ok, body, conn} = read_body(conn)
+  defp sign(data, secret) do
+    "sha1=" <> Base.encode16(:crypto.hmac(:sha, secret, data), case: :lower)
+  end
+
+  def verify(conn, body, secret) do
     [signature] = get_req_header(conn, "x-hub-signature")
-
-    secrets = apply(fun, [])
-
-    if secret = Utils.find_first(secrets, &Signature.valid?(signature, &1, body)) do
-      conn
-      |> assign(:payload, Poison.decode!(body))
-      |> assign(:secret, secret)
-    else
-      conn |> send_resp(403, "") |> halt()
-    end
+    Plug.Crypto.secure_compare(signature, sign(body, secret))
   end
 end
