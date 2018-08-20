@@ -6,7 +6,7 @@ defmodule Cobwebhook.GitHub do
   use Cobwebhook.Adapter
 
   def parse(_conn, body) do
-    Poison.decode!(body)
+    Jason.decode!(body)
   end
 
   defp sign(data, secret) do
