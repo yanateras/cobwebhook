@@ -1,6 +1,6 @@
 defmodule Cobwebhook.GitHub do
-  @moduledoc """
-    See: <https://developer.github.com/webhooks/>
+  @moduledoc ~S"""
+  See: <https://developer.github.com/webhooks/>
   """
 
   use Cobwebhook.Adapter

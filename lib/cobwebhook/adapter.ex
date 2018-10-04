@@ -2,13 +2,13 @@ defmodule Cobwebhook.Adapter do
   @type secret :: String.t()
   @type secrets :: List.t(secret()) | MapSet.t(secret())
 
-  @doc """
-    Parse trusted body into params.
+  @doc ~S"""
+  Parse trusted body into params.
   """
   @callback parse(conn :: Plug.Conn.t(), body :: Plug.Conn.body()) :: map()
 
-  @doc """
-    Check if request was signed with the given secret.
+  @doc ~S"""
+  Check if request was signed with the given secret.
   """
   @callback verify(conn :: Plug.Conn.t(), body :: Plug.Conn.body(), secret :: secret()) :: boolean()
 

@@ -1,6 +1,6 @@
 defmodule Cobwebhook.Slack do
-  @moduledoc """
-    See: <https://api.slack.com/events-api>
+  @moduledoc ~S"""
+  See: <https://api.slack.com/events-api>
   """
 
   use Cobwebhook.Adapter
